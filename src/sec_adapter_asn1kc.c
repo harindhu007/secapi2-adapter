@@ -1,5 +1,5 @@
 /**
- * Copyright 2020-2021 Comcast Cable Communications Management, LLC
+ * Copyright 2020-2025 Comcast Cable Communications Management, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -713,7 +713,7 @@ Sec_Result SecAsn1KC_AddAttrBuffer(Sec_Asn1KC* kc, const char* key, void* buf, S
     } while (false);
 
     if (result != SEC_RESULT_SUCCESS) {
-        free(ptr);
+        SEC_FREE(ptr);
     }
     return result;
 }

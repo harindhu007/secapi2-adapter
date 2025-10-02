@@ -1,5 +1,5 @@
 /**
- * Copyright 2020-2023 Comcast Cable Communications Management, LLC
+ * Copyright 2020-2025 Comcast Cable Communications Management, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,7 +86,7 @@ void release_svp_buffer(Sec_ProcessorHandle* processorHandle, Sec_OpaqueBufferHa
             size_t svp_size;
             sa_invoke(processorHandle, SA_SVP_BUFFER_RELEASE, &svp_memory, &svp_size,
                     next_processor_buffer->svp_buffer);
-            free(next_processor_buffer);
+            SEC_FREE(next_processor_buffer);
             break;
         }
 
@@ -107,7 +107,7 @@ void release_svp_buffer(Sec_ProcessorHandle* processorHandle, Sec_OpaqueBufferHa
             else
                 previous_opaque_buffer_handle->next = next_opaque_buffer_handle->next;
 
-            free(next_opaque_buffer_handle);
+            SEC_FREE(next_opaque_buffer_handle);
             break;
         }
 
@@ -142,7 +142,7 @@ Sec_Result SecOpaqueBuffer_Create(Sec_OpaqueBufferHandle** opaqueBufferHandle, v
 
     if (pthread_mutex_init(&(*opaqueBufferHandle)->mutex, NULL) != 0) {
         SEC_LOG_ERROR("Error initializing mutex");
-        free(*opaqueBufferHandle);
+        SEC_FREE(*opaqueBufferHandle);
         return SEC_RESULT_FAILURE;
     }
 

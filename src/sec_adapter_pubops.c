@@ -1,5 +1,5 @@
 /**
- * Copyright 2020-2021 Comcast Cable Communications Management, LLC
+ * Copyright 2020-2025 Comcast Cable Communications Management, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -661,7 +661,7 @@ Sec_Result Pubops_ExtractECCPubToPUBKEYDer(Sec_ECCRawPublicKey* eccRawPublicKey,
     EC_KEY_free(ec_key);
     if (*outLength <= 0) {
         SEC_LOG_ERROR("i2d_EC_PUBKEY failed");
-        free(*out);
+        SEC_FREE(*out);
         return SEC_RESULT_FAILURE;
     }
 

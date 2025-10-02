@@ -1,5 +1,5 @@
 /**
- * Copyright 2020-2023 Comcast Cable Communications Management, LLC
+ * Copyright 2020-2025 Comcast Cable Communications Management, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -964,7 +964,7 @@ Sec_Result SecCipher_ProcessOpaqueWithMap(Sec_CipherHandle* cipherHandle, SEC_BY
     out_buffer.context.svp.offset = 0;
     out_buffer.context.svp.buffer = get_svp_buffer(cipherHandle->processorHandle, *opaqueBufferHandle);
     if (out_buffer.context.svp.buffer == INVALID_HANDLE) {
-        free(subsample_lengths);
+        SEC_FREE(subsample_lengths);
         SecOpaqueBuffer_Free(*opaqueBufferHandle);
         *opaqueBufferHandle = NULL;
         *bytesWritten = 0;
@@ -989,7 +989,7 @@ Sec_Result SecCipher_ProcessOpaqueWithMap(Sec_CipherHandle* cipherHandle, SEC_BY
     sample.in = &in_buffer;
 
     sa_status status = sa_invoke(cipherHandle->processorHandle, SA_PROCESS_COMMON_ENCRYPTION, (size_t) 1, &sample);
-    free(subsample_lengths);
+    SEC_FREE(subsample_lengths);
     if (status != SA_STATUS_OK) {
         SecOpaqueBuffer_Free(*opaqueBufferHandle);
         *opaqueBufferHandle = NULL;
@@ -1058,7 +1058,7 @@ Sec_Result SecCipher_ProcessOpaqueWithMapAndPattern(Sec_CipherHandle* cipherHand
     out_buffer.context.svp.offset = 0;
     out_buffer.context.svp.buffer = get_svp_buffer(cipherHandle->processorHandle, *opaqueBufferHandle);
     if (out_buffer.context.svp.buffer == INVALID_HANDLE) {
-        free(subsample_lengths);
+        SEC_FREE(subsample_lengths);
         SecOpaqueBuffer_Free(*opaqueBufferHandle);
         *opaqueBufferHandle = NULL;
         *bytesWritten = 0;
@@ -1083,7 +1083,7 @@ Sec_Result SecCipher_ProcessOpaqueWithMapAndPattern(Sec_CipherHandle* cipherHand
     sample.in = &in_buffer;
 
     sa_status status = sa_invoke(cipherHandle->processorHandle, SA_PROCESS_COMMON_ENCRYPTION, (size_t) 1, &sample);
-    free(subsample_lengths);
+    SEC_FREE(subsample_lengths);
     if (status != SA_STATUS_OK) {
         SecOpaqueBuffer_Free(*opaqueBufferHandle);
         *opaqueBufferHandle = NULL;

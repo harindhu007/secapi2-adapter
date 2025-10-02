@@ -994,7 +994,7 @@ Sec_Result SecKey_ECDHKeyAgreementWithKDF(Sec_KeyHandle* keyHandle, Sec_ECCRawPu
 
     sa_status status = sa_invoke(keyHandle->processorHandle, SA_KEY_EXCHANGE, &shared_secret, &rights,
             SA_KEY_EXCHANGE_ALGORITHM_ECDH, keyHandle->key.handle, other_public, (size_t) other_public_length, NULL);
-    free(other_public);
+    SEC_FREE(other_public);
     CHECK_STATUS(status)
 
     // Derive the key from the shared secret using a key derivation algorithm.
@@ -2697,21 +2697,21 @@ static bool is_jwt_key_container(SEC_BYTE* key_buffer, SEC_SIZE key_length) {
     SEC_SIZE length;
     SEC_BYTE* header = malloc(header_length);
     Sec_Result result = SecUtils_Base64Decode(header_b64, header_b64_length, header, header_length, &length);
-    free(header);
+    SEC_FREE(header);
     if (result != SEC_RESULT_SUCCESS)
         return false;
 
     SEC_SIZE payload_length = 3 * payload_b64_length / 4;
     SEC_BYTE* payload = malloc(payload_length);
     result = SecUtils_Base64Decode(payload_b64, payload_b64_length, payload, payload_length, &length);
-    free(payload);
+    SEC_FREE(payload);
     if (result != SEC_RESULT_SUCCESS)
         return false;
 
     SEC_SIZE mac_length = 3 * mac_b64_length / 4;
     SEC_BYTE* mac = malloc(mac_length);
     result = SecUtils_Base64Decode(mac_b64, mac_b64_length, mac, mac_length, &length);
-    free(mac);
+    SEC_FREE(mac);
     if (result != SEC_RESULT_SUCCESS)
         return false;
 

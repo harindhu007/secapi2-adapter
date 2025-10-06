@@ -1,5 +1,5 @@
 /**
- * Copyright 2020-2022 Comcast Cable Communications Management, LLC
+ * Copyright 2020-2025 Comcast Cable Communications Management, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,7 +116,7 @@ Sec_Result SecMac_GetInstance(Sec_ProcessorHandle* processorHandle, Sec_MacAlgor
             break;
 
         default:
-            free(newMacHandle);
+            SEC_FREE(newMacHandle);
             return SEC_RESULT_INVALID_PARAMETERS;
     }
 
@@ -124,7 +124,7 @@ Sec_Result SecMac_GetInstance(Sec_ProcessorHandle* processorHandle, Sec_MacAlgor
     sa_status status = sa_invoke(processorHandle, SA_CRYPTO_MAC_INIT, &newMacHandle->mac_context, mac_algorithm,
             key->handle, parameters);
     if (status != SA_STATUS_OK)
-        free(newMacHandle);
+        SEC_FREE(newMacHandle);
 
     CHECK_STATUS(status)
     *macHandle = newMacHandle;

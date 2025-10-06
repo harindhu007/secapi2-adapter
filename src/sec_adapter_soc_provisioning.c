@@ -88,7 +88,7 @@ uint8_t* readFkpsCredential(const char* filename, size_t* outSize) {
 
     if (bytesRead != (size_t)size) {
         SEC_LOG_ERROR("Failed to read complete file: %s", filename);
-        free(buffer);
+        SEC_FREE(buffer);
         return NULL;
     }
 
@@ -153,10 +153,10 @@ bool readNetflixData(Sec_ProcessorHandle* processorHandle, NetflixProvisioning**
 
     if (!esn_container || !encryption_key || !hmac_key || !wrapping_key) {
         SEC_LOG_ERROR("Failed to read Netflix provisioning data");
-        free(esn_container);
-        free(encryption_key);
-        free(hmac_key);
-        free(wrapping_key);
+        SEC_FREE(esn_container);
+        SEC_FREE(encryption_key);
+        SEC_FREE(hmac_key);
+        SEC_FREE(wrapping_key);
         return false;
     }
 
@@ -165,10 +165,10 @@ bool readNetflixData(Sec_ProcessorHandle* processorHandle, NetflixProvisioning**
         *nflxProvision = (NetflixProvisioning*)malloc(sizeof(NetflixProvisioning));
         if (!(*nflxProvision)) {
             SEC_LOG_ERROR("Failed to allocate memory for NetflixProvisioning");
-            free(esn_container);
-            free(encryption_key);
-            free(hmac_key);
-            free(wrapping_key);
+            SEC_FREE(esn_container);
+            SEC_FREE(encryption_key);
+            SEC_FREE(hmac_key);
+            SEC_FREE(wrapping_key);
             return false;
         }
     }
@@ -178,56 +178,50 @@ bool readNetflixData(Sec_ProcessorHandle* processorHandle, NetflixProvisioning**
     (*nflxProvision)->encryptionKey = malloc(encryption_size);
     if (!(*nflxProvision)->encryptionKey) {
         SEC_LOG_ERROR("Memory allocation failed for encryption key");
-        free(esn_container);
-        free(encryption_key);
-        free(hmac_key);
-        free(wrapping_key);
+        SEC_FREE(esn_container);
+        SEC_FREE(encryption_key);
+        SEC_FREE(hmac_key);
+        SEC_FREE(wrapping_key);
         return false;
     }
     memcpy((*nflxProvision)->encryptionKey, encryption_key, encryption_size);
-    free(encryption_key);
+    SEC_FREE(encryption_key);
 
     // Copy HMAC key
     (*nflxProvision)->hmacKeyLength = hmac_size;
     (*nflxProvision)->hmacKey = malloc(hmac_size);
     if (!(*nflxProvision)->hmacKey) {
         SEC_LOG_ERROR("Memory allocation failed for HMAC key");
-        free(esn_container);
-        free(encryption_key);
-        free(hmac_key);
-        free(wrapping_key);
+        SEC_FREE(esn_container);
+        SEC_FREE(hmac_key);
+        SEC_FREE(wrapping_key);
         return false;
     }
     memcpy((*nflxProvision)->hmacKey, hmac_key, hmac_size);
-    free(hmac_key);
+    SEC_FREE(hmac_key);
 
     // Copy wrapping key
     (*nflxProvision)->wrappingKeyLength = wrapping_size;
     (*nflxProvision)->wrappingKey = malloc(wrapping_size);
     if (!(*nflxProvision)->wrappingKey) {
         SEC_LOG_ERROR("Memory allocation failed for wrapping key");
-        free(esn_container);
-        free(encryption_key);
-        free(hmac_key);
-        free(wrapping_key);
+        SEC_FREE(esn_container);
+        SEC_FREE(wrapping_key);
         return false;
     }
     memcpy((*nflxProvision)->wrappingKey, wrapping_key, wrapping_size);
-    free(wrapping_key);
+    SEC_FREE(wrapping_key);
 
     // Copy ESN container
     (*nflxProvision)->esnContainerLength = esn_size;
     (*nflxProvision)->esnContainer = malloc(esn_size);
     if (!(*nflxProvision)->esnContainer) {
         SEC_LOG_ERROR("Memory allocation failed for ESN container");
-        free(esn_container);
-        free(encryption_key);
-        free(hmac_key);
-        free(wrapping_key);
+        SEC_FREE(esn_container);
         return false;
     }
     memcpy((*nflxProvision)->esnContainer, esn_container, esn_size);
-    free(esn_container);
+    SEC_FREE(esn_container);
     return true;
 }
 
@@ -267,7 +261,7 @@ bool readAppleMfiData(Sec_ProcessorHandle* processorHandle, AppleMfiProvisioning
     void* provisioning_obj = readFkpsCredential(file_provisioning_object_name, &provisioning_obj_size);
     if (!provisioning_obj || provisioning_obj_size == 0) {
         SEC_LOG_ERROR("Failed to read: %s", file_provisioning_object_name);
-        free(base_key);
+        SEC_FREE(base_key);
         return false;
     }
 
@@ -275,8 +269,8 @@ bool readAppleMfiData(Sec_ProcessorHandle* processorHandle, AppleMfiProvisioning
         *mfiProvision = (AppleMfiProvisioning*)malloc(sizeof(AppleMfiProvisioning));
         if (!(*mfiProvision)) {
             SEC_LOG_ERROR("Memory allocation failed for AppleMfiProvisioning");
-            free(base_key);
-            free(provisioning_obj);
+            SEC_FREE(base_key);
+            SEC_FREE(provisioning_obj);
             return false;
         }
     }
@@ -285,23 +279,23 @@ bool readAppleMfiData(Sec_ProcessorHandle* processorHandle, AppleMfiProvisioning
     (*mfiProvision)->mfiBaseKey = malloc(base_key_size);
     if (!(*mfiProvision)->mfiBaseKey) {
         SEC_LOG_ERROR("Memory allocation failed for base key");
-        free(base_key);
-        free(provisioning_obj);
+        SEC_FREE(base_key);
+        SEC_FREE(provisioning_obj);
         return false;
     }
     memcpy((*mfiProvision)->mfiBaseKey, base_key, base_key_size);
-    free(base_key);
+    SEC_FREE(base_key);
 
     (*mfiProvision)->mfiProvisioningObjectLength = (unsigned int)provisioning_obj_size;
     (*mfiProvision)->mfiProvisioningObject = malloc(provisioning_obj_size);
     if (!(*mfiProvision)->mfiProvisioningObject) {
         SEC_LOG_ERROR("Memory allocation failed for provisioning object");
-        free((*mfiProvision)->mfiBaseKey);
-        free(provisioning_obj);
+        SEC_FREE((*mfiProvision)->mfiBaseKey);
+        SEC_FREE(provisioning_obj);
         return false;
     }
     memcpy((*mfiProvision)->mfiProvisioningObject, provisioning_obj, provisioning_obj_size);
-    free(provisioning_obj);
+    SEC_FREE(provisioning_obj);
 
     return true;
 }
@@ -328,7 +322,7 @@ bool readAppleFairPlayData(Sec_ProcessorHandle* processorHandle, AppleFairPlayPr
         *fairPlayProvision = (AppleFairPlayProvisioning*)malloc(sizeof(AppleFairPlayProvisioning));
         if (!(*fairPlayProvision)) {
             SEC_LOG_ERROR("Memory allocation failed for AppleFairPlayProvisioning");
-            free(fairplay_secret);
+            SEC_FREE(fairplay_secret);
             return false;
         }
     }
@@ -337,12 +331,12 @@ bool readAppleFairPlayData(Sec_ProcessorHandle* processorHandle, AppleFairPlayPr
     (*fairPlayProvision)->fairPlaySecret = malloc(secret_size);
     if (!(*fairPlayProvision)->fairPlaySecret) {
         SEC_LOG_ERROR("Memory allocation failed for FairPlay secret");
-        free(fairplay_secret);
+        SEC_FREE(fairplay_secret);
         return false;
     }
 
     memcpy((*fairPlayProvision)->fairPlaySecret, fairplay_secret, secret_size);
-    free(fairplay_secret);
+    SEC_FREE(fairplay_secret);
 
     return true;
 }
@@ -388,7 +382,7 @@ bool readPlayReadyData(Sec_ProcessorHandle* processorHandle, PlayReadyProvisioni
     void* oem_cert = readFkpsCredential(file_oem_cert, &oem_cert_size);
     if (!oem_cert || oem_cert_size == 0) {
         SEC_LOG_ERROR("Failed to read: %s", file_oem_cert);
-        free(private_key);
+        SEC_FREE(private_key);
         return false;
     }
 
@@ -396,8 +390,8 @@ bool readPlayReadyData(Sec_ProcessorHandle* processorHandle, PlayReadyProvisioni
         *prProvision = (PlayReadyProvisioning*)malloc(sizeof(PlayReadyProvisioning));
         if (!(*prProvision)) {
             SEC_LOG_ERROR("Memory allocation failed for PlayReadyProvisioning");
-            free(private_key);
-            free(oem_cert);
+            SEC_FREE(private_key);
+            SEC_FREE(oem_cert);
             return false;
         }
     }
@@ -408,22 +402,22 @@ bool readPlayReadyData(Sec_ProcessorHandle* processorHandle, PlayReadyProvisioni
     (*prProvision)->privateKey = malloc(private_key_size);
     if (!(*prProvision)->privateKey) {
         SEC_LOG_ERROR("Memory allocation failed for privateKey");
-        free(private_key);
-        free(oem_cert);
+        SEC_FREE(private_key);
+        SEC_FREE(oem_cert);
         return false;
     }
     memcpy((*prProvision)->privateKey, private_key, private_key_size);
-    free(private_key);
+    SEC_FREE(private_key);
 
     (*prProvision)->modelCertificateLength = (unsigned int)oem_cert_size;
     (*prProvision)->modelCertificate = malloc(oem_cert_size);
     if (!(*prProvision)->modelCertificate) {
         SEC_LOG_ERROR("Memory allocation failed for modelCertificate");
-        free(oem_cert);
+        SEC_FREE(oem_cert);
         return false;
     }
     memcpy((*prProvision)->modelCertificate, oem_cert, oem_cert_size);
-    free(oem_cert);
+    SEC_FREE(oem_cert);
 
     return true;
 }
@@ -465,7 +459,7 @@ bool readWidevineData(Sec_ProcessorHandle* processorHandle, WidevineOemProvision
     unsigned char* oem_cert = readFkpsCredential(file_oem_cert, &oem_cert_size);
     if (!oem_cert || oem_cert_size == 0) {
         SEC_LOG_ERROR("This file has a problem: %s", file_oem_cert);
-        free(private_key);
+        SEC_FREE(private_key);
         return false;
     }
 
@@ -474,8 +468,8 @@ bool readWidevineData(Sec_ProcessorHandle* processorHandle, WidevineOemProvision
         *wvProvision = (WidevineOemProvisioning*)malloc(sizeof(WidevineOemProvisioning));
         if (!(*wvProvision)) {
             SEC_LOG_ERROR("Failed to allocate memory for wvProvision.");
-            free(private_key);
-            free(oem_cert);
+            SEC_FREE(private_key);
+            SEC_FREE(oem_cert);
             return false;
         }
     }
@@ -486,23 +480,23 @@ bool readWidevineData(Sec_ProcessorHandle* processorHandle, WidevineOemProvision
     (*wvProvision)->oemDevicePrivateKey = malloc(private_key_size);
     if (!(*wvProvision)->oemDevicePrivateKey) {
         SEC_LOG_ERROR("Memory allocation failed");
-        free(private_key);
-        free(oem_cert);
+        SEC_FREE(private_key);
+        SEC_FREE(oem_cert);
         return false;
     }
     memcpy((*wvProvision)->oemDevicePrivateKey, private_key, private_key_size);
-    free(private_key);
+    SEC_FREE(private_key);
 
     // Copy cert
     (*wvProvision)->oemDeviceCertificateLength = (unsigned int)oem_cert_size;
     (*wvProvision)->oemDeviceCertificate = malloc(oem_cert_size);
     if (!(*wvProvision)->oemDeviceCertificate) {
         SEC_LOG_ERROR("Memory allocation failed");
-        free(oem_cert);
+        SEC_FREE(oem_cert);
         return false;
     }
     memcpy((*wvProvision)->oemDeviceCertificate, oem_cert, oem_cert_size);
-    free(oem_cert);
+    SEC_FREE(oem_cert);
 
     return true;
 
@@ -511,38 +505,38 @@ bool readWidevineData(Sec_ProcessorHandle* processorHandle, WidevineOemProvision
 void freeWidevineProvisioning(WidevineOemProvisioning* provision) {
     if (!provision) return;
 
-    free(provision->oemDevicePrivateKey);
-    free(provision->oemDeviceCertificate);
-    free(provision);
+    SEC_FREE(provision->oemDevicePrivateKey);
+    SEC_FREE(provision->oemDeviceCertificate);
+    SEC_FREE(provision);
 }
 
 void freeNetflixProvisioning(NetflixProvisioning* provision) {
     if (!provision) return;
-    free(provision->encryptionKey);
-    free(provision->hmacKey);
-    free(provision->wrappingKey);
-    free(provision->esnContainer);
-    free(provision);
+    SEC_FREE(provision->encryptionKey);
+    SEC_FREE(provision->hmacKey);
+    SEC_FREE(provision->wrappingKey);
+    SEC_FREE(provision->esnContainer);
+    SEC_FREE(provision);
 }
 
 void freePlayReadyProvisioning(PlayReadyProvisioning* provision) {
     if (!provision) return;
-    free(provision->privateKey);
-    free(provision->modelCertificate);
-    free(provision);
+    SEC_FREE(provision->privateKey);
+    SEC_FREE(provision->modelCertificate);
+    SEC_FREE(provision);
 }
 
 void freeAppleMfiProvisioning(AppleMfiProvisioning* provision) {
     if (!provision) return;
-    free(provision->mfiBaseKey);
-    free(provision->mfiProvisioningObject);
-    free(provision);
+    SEC_FREE(provision->mfiBaseKey);
+    SEC_FREE(provision->mfiProvisioningObject);
+    SEC_FREE(provision);
 }
 
 void freeAppleFairPlayProvisioning(AppleFairPlayProvisioning* provision) {
     if (!provision) return;
-    free(provision->fairPlaySecret);
-    free(provision);
+    SEC_FREE(provision->fairPlaySecret);
+    SEC_FREE(provision);
 }
 
 Sec_Result SecSocProv_SocVendorSpecific(SEC_OBJECTID object_id) {
@@ -629,8 +623,8 @@ bool provisioning_ta(Sec_ProcessorHandle* processorHandle, size_t numPaths, sa_k
             return SEC_RESULT_FAILURE;
         }
         status = sa_key_provision_ta(WIDEVINE_OEM_PROVISIONING, provisioningData, dataSize, parameters);
-        free(provisioningData);
-        free(parameters);
+        SEC_FREE(provisioningData);
+        SEC_FREE(parameters);
         if (status != SA_STATUS_OK) {
             SEC_LOG_ERROR("Falied sa_key_provision_ta call in widevine");
             return SEC_RESULT_FAILURE;
@@ -645,8 +639,8 @@ bool provisioning_ta(Sec_ProcessorHandle* processorHandle, size_t numPaths, sa_k
             return SEC_RESULT_FAILURE;
         }
         status = sa_key_provision_ta(PLAYREADY_MODEL_PROVISIONING, playReadyprovisioning2kData, dataSize, parameters);
-        free(playReadyprovisioning2kData);
-        free(parameters);
+        SEC_FREE(playReadyprovisioning2kData);
+        SEC_FREE(parameters);
         if (status != SA_STATUS_OK) {
             SEC_LOG_ERROR("Falied sa_key_provision_ta call in playready 2k");
             return SEC_RESULT_FAILURE;
@@ -661,8 +655,8 @@ bool provisioning_ta(Sec_ProcessorHandle* processorHandle, size_t numPaths, sa_k
             return SEC_RESULT_FAILURE;
         }
         status = sa_key_provision_ta(PLAYREADY_MODEL_PROVISIONING, playReadyprovisioning3kData, dataSize, parameters);
-        free(playReadyprovisioning3kData);
-        free(parameters);
+        SEC_FREE(playReadyprovisioning3kData);
+        SEC_FREE(parameters);
         if (status != SA_STATUS_OK) {
             SEC_LOG_ERROR("Falied sa_key_provision_ta call in playready 3k");
             return SEC_RESULT_FAILURE;
@@ -677,8 +671,8 @@ bool provisioning_ta(Sec_ProcessorHandle* processorHandle, size_t numPaths, sa_k
             return SEC_RESULT_FAILURE;
         }
         status = sa_key_provision_ta(APPLE_MFI_PROVISIONING, appleMfiprovisioningData, dataSize, parameters);
-        free(appleMfiprovisioningData);
-        free(parameters);
+        SEC_FREE(appleMfiprovisioningData);
+        SEC_FREE(parameters);
         if (status != SA_STATUS_OK) {
             SEC_LOG_ERROR("Failed to call sa_key_provision_ta in Apple_Mfi");
             return SEC_RESULT_FAILURE;
@@ -693,8 +687,8 @@ bool provisioning_ta(Sec_ProcessorHandle* processorHandle, size_t numPaths, sa_k
             return SEC_RESULT_FAILURE;
         }
         status = sa_key_provision_ta(APPLE_FAIRPLAY_PROVISIONING, appleFairplayProvisioningData, dataSize, parameters);
-        free(appleFairplayProvisioningData);
-        free(parameters);
+        SEC_FREE(appleFairplayProvisioningData);
+        SEC_FREE(parameters);
         if (status != SA_STATUS_OK) {
             SEC_LOG_ERROR("Failed to call sa_key_provision_ta in AppleFairplay");
             return SEC_RESULT_FAILURE;
@@ -710,8 +704,8 @@ bool provisioning_ta(Sec_ProcessorHandle* processorHandle, size_t numPaths, sa_k
             return SEC_RESULT_FAILURE;
         }
         status = sa_key_provision_ta(NETFLIX_PROVISIONING, netflixProvisioningData, dataSize, parameters);
-        free(netflixProvisioningData);
-        free(parameters);
+        SEC_FREE(netflixProvisioningData);
+        SEC_FREE(parameters);
         if (status != SA_STATUS_OK) {
             SEC_LOG_ERROR("Failed to call sa_key_provision_ta in Netflix");
             return SEC_RESULT_FAILURE;
@@ -720,7 +714,7 @@ bool provisioning_ta(Sec_ProcessorHandle* processorHandle, size_t numPaths, sa_k
         break;
 
     default:
-        free(parameters);
+        SEC_FREE(parameters);
         SEC_LOG_ERROR("Unknown provisioning type");
         return SEC_RESULT_FAILURE;
     }

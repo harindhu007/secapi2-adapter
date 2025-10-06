@@ -1,5 +1,5 @@
 /**
- * Copyright 2020-2023 Comcast Cable Communications Management, LLC
+ * Copyright 2020-2025 Comcast Cable Communications Management, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -404,7 +404,7 @@ Sec_Result SecProcessor_Release(Sec_ProcessorHandle* processorHandle) {
 
     SEC_FREE(processorHandle->app_dir);
     SEC_FREE(processorHandle->global_dir);
-    free(processorHandle);
+    SEC_FREE(processorHandle);
     return SEC_RESULT_SUCCESS;
 }
 
@@ -429,7 +429,7 @@ void Sec_NativeFree(Sec_ProcessorHandle* processorHandle, void* ptr) {
     if (processorHandle == NULL)
         return;
 
-    free(ptr);
+    SEC_FREE(ptr);
 }
 
 Sec_Result Sec_SetStorageDir(const char* provided_dir, const char* default_dir, char* output_dir) {

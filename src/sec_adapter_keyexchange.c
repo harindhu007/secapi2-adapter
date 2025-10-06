@@ -1,5 +1,5 @@
 /**
- * Copyright 2020-2023 Comcast Cable Communications Management, LLC
+ * Copyright 2020-2025 Comcast Cable Communications Management, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -315,7 +315,7 @@ Sec_Result SecKeyExchange_ComputeSecret(Sec_KeyExchangeHandle* keyExchangeHandle
             EVP_PKEY_free(evp_pkey);
             if (key_len <= 0) {
                 SEC_LOG_ERROR("i2d_PUBKEY failed");
-                free(public_key_bytes);
+                SEC_FREE(public_key_bytes);
                 return SEC_RESULT_FAILURE;
             }
 
@@ -350,7 +350,7 @@ Sec_Result SecKeyExchange_ComputeSecret(Sec_KeyExchangeHandle* keyExchangeHandle
     sa_key shared_secret;
     sa_status status = sa_invoke(keyExchangeHandle->processorHandle, SA_KEY_EXCHANGE, &shared_secret, &rights,
             algorithm, *keyExchangeHandle->key, public_key_bytes, (size_t) key_len, NULL);
-    free(public_key_bytes);
+    SEC_FREE(public_key_bytes);
     CHECK_STATUS(status)
 
     Sec_Key key = {.handle = shared_secret};

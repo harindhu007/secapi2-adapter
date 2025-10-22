@@ -1,5 +1,5 @@
 /**
- * Copyright 2020-2022 Comcast Cable Communications Management, LLC
+ * Copyright 2020-2025 Comcast Cable Communications Management, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -222,8 +222,6 @@ static Sec_Result Sec_StoreCertificateData(Sec_ProcessorHandle* processorHandle,
             SEC_LOG_ERROR("Cannot write file because app_dir is NULL");
             return SEC_RESULT_FAILURE;
         }
-
-        SecCertificate_Delete(processorHandle, object_id);
 
         char file_name_cert[SEC_MAX_FILE_PATH_LEN];
         char file_name_info[SEC_MAX_FILE_PATH_LEN];

@@ -444,6 +444,13 @@ typedef enum {
     SEC_KEYUSAGE_NUM
 } Sec_KeyUsage;
 
+/**
+ * @brief Sample size
+ */
+typedef enum {
+    SEC_SAMPLE_SIZE = 1
+} Sec_SampleSize;
+
 typedef struct {
     char keyId[40];
     SEC_BYTE rights[SEC_KEYOUTPUTRIGHT_NUM];
